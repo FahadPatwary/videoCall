@@ -561,3 +561,60 @@ body {
   gap: 10px;
   margin-bottom: 20px;
 }
+
+/* Connection status indicator */
+.connection-status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  padding: 5px 10px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-dot.connected {
+  background-color: var(--success-color);
+  box-shadow: 0 0 5px var(--success-color);
+}
+
+.status-dot.connecting {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 5px var(--primary-color);
+  animation: pulse 1.5s infinite;
+}
+
+.status-dot.reconnecting {
+  background-color: #ffc107;
+  box-shadow: 0 0 5px #ffc107;
+  animation: pulse 1s infinite;
+}
+
+.status-dot.disconnected {
+  background-color: var(--danger-color);
+  box-shadow: 0 0 5px var(--danger-color);
+}
+
+.status-text {
+  color: var(--dark-color);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}

@@ -24,6 +24,9 @@ const VideoCall = ({
   const [encryptionStatus, setEncryptionStatus] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [retryCount, setRetryCount] = useState(0);
+  const [connectionStatus, setConnectionStatus] = useState<
+    "disconnected" | "connecting" | "connected" | "reconnecting"
+  >("disconnected");
 
   // Check WebRTC support
   const webRTCSupport = useWebRTCSupport();
@@ -53,6 +56,7 @@ const VideoCall = ({
     const initializeCall = async () => {
       try {
         setIsConnecting(true);
+        setConnectionStatus("connecting");
 
         // Get local media stream with fallback options
         let localStream;
@@ -111,6 +115,7 @@ const VideoCall = ({
         peerConnectionService.onConnect(() => {
           setIsConnected(true);
           setIsConnecting(false);
+          setConnectionStatus("connected");
           setRetryCount(0); // Reset retry count on successful connection
 
           // Update encryption status
@@ -142,14 +147,17 @@ const VideoCall = ({
             setError(
               "Camera or microphone access denied. Please check your browser permissions."
             );
+            setConnectionStatus("disconnected");
           } else if (err.message.includes("RTCPeerConnection")) {
             // If we've already retried a few times, show a more permanent error
             if (retryCount >= 2) {
               setError(`WebRTC connection failed: ${err.message}`);
+              setConnectionStatus("disconnected");
             } else {
               // Otherwise, try to reinitialize
               setRetryCount((prev) => prev + 1);
               setError("Connection failed. Retrying...");
+              setConnectionStatus("reconnecting");
 
               // Clean up and try again after a short delay
               setTimeout(() => {
@@ -163,6 +171,7 @@ const VideoCall = ({
             }
           } else {
             setError(`Connection error: ${err.message}`);
+            setConnectionStatus("disconnected");
           }
 
           setIsConnecting(false);
@@ -173,7 +182,10 @@ const VideoCall = ({
           console.log("Connection closed, updating UI");
           if (isConnected) {
             setIsConnected(false);
-            setError("Connection closed. The other person may have left the call.");
+            setConnectionStatus("disconnected");
+            setError(
+              "Connection closed. The other person may have left the call."
+            );
           }
         });
 
@@ -191,6 +203,7 @@ const VideoCall = ({
           }`
         );
         setIsConnecting(false);
+        setConnectionStatus("disconnected");
         isInitializedRef.current = false;
       }
     };
@@ -262,6 +275,7 @@ const VideoCall = ({
     }
     setIsConnected(false);
     setIsConnecting(false);
+    setConnectionStatus("disconnected");
     window.location.reload(); // Reload the page to reset the state
   };
 
@@ -275,6 +289,7 @@ const VideoCall = ({
     setRetryCount(0);
     setIsConnecting(false);
     setIsConnected(false);
+    setConnectionStatus("disconnected");
   };
 
   // If WebRTC is not supported, show error
@@ -302,6 +317,16 @@ const VideoCall = ({
             <div className="video-label">Remote User</div>
           </div>
         )}
+      </div>
+
+      <div className="connection-status-indicator">
+        <div className={`status-dot ${connectionStatus}`}></div>
+        <span className="status-text">
+          {connectionStatus === "connected" && "Connected"}
+          {connectionStatus === "connecting" && "Connecting..."}
+          {connectionStatus === "reconnecting" && "Reconnecting..."}
+          {connectionStatus === "disconnected" && "Disconnected"}
+        </span>
       </div>
 
       <div className="controls">
