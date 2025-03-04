@@ -1,5 +1,5 @@
 // Ensure global is defined for simple-peer
-if (typeof global === 'undefined') {
+if (typeof global === "undefined") {
   window.global = window;
 }
 

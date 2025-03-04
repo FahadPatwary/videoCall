@@ -1,0 +1,22 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  command = "npm run dev"
+  port = 5173
+
+# Handle SPA routing
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer-when-downgrade"
+    Content-Security-Policy = "default-src 'self'; connect-src 'self' stun:stun.l.google.com:19302 stun:stun1.l.google.com:19302 stun:stun2.l.google.com:19302; media-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors 'none';" 

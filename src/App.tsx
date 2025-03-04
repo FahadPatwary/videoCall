@@ -39,7 +39,7 @@ function App() {
     setJoinCode(undefined);
     setShowFullCode(false);
   };
-  
+
   // Copy connection code to clipboard
   const copyCodeToClipboard = () => {
     if (connectionCode) {
@@ -54,7 +54,7 @@ function App() {
         });
     }
   };
-  
+
   // Toggle showing full connection code
   const toggleShowFullCode = () => {
     setShowFullCode(!showFullCode);
@@ -67,14 +67,14 @@ function App() {
         <p className="app-description">
           End-to-end encrypted video calls without a central server
         </p>
-        
+
         {isCallActive && isInitiator && connectionCode && (
           <div className="header-connection-code">
             <div className="code-label">Connection Code:</div>
             <div className="header-code-container">
               <div className="code-text-truncated">
-                {connectionCode.length > 30 
-                  ? `${connectionCode.substring(0, 30)}...` 
+                {connectionCode.length > 30
+                  ? `${connectionCode.substring(0, 30)}...`
                   : connectionCode}
               </div>
               <button className="view-btn" onClick={toggleShowFullCode}>
@@ -117,7 +117,7 @@ function App() {
           </button>
         )}
       </footer>
-      
+
       {/* Modal for full connection code */}
       {showFullCode && connectionCode && (
         <div className="modal-overlay" onClick={toggleShowFullCode}>

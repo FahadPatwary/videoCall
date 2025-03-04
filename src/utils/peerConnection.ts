@@ -100,10 +100,12 @@ export class PeerConnectionService {
 
       this.peer.on("error", (err: Error) => {
         console.error("Peer connection error:", err);
-        
+
         // Handle specific errors
-        if (err.message.includes("ICE connection failed") || 
-            err.message.includes("ICE disconnected")) {
+        if (
+          err.message.includes("ICE connection failed") ||
+          err.message.includes("ICE disconnected")
+        ) {
           this.handleConnectionFailure(initiator, stream);
         } else if (this.onErrorCallback) {
           this.onErrorCallback(err);
@@ -113,7 +115,7 @@ export class PeerConnectionService {
       this.peer.on("close", () => {
         console.log("Peer connection closed and connecting status");
         this.isInitialized = false;
-        
+
         // Notify about connection closure
         if (this.onCloseCallback) {
           this.onCloseCallback();
@@ -133,16 +135,21 @@ export class PeerConnectionService {
   /**
    * Handle connection failures with potential reconnection
    */
-  private handleConnectionFailure(initiator: boolean, stream: MediaStream): void {
+  private handleConnectionFailure(
+    initiator: boolean,
+    stream: MediaStream
+  ): void {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`Connection failed. Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} to reconnect...`);
-      
+      console.log(
+        `Connection failed. Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} to reconnect...`
+      );
+
       // Clear any existing timeout
       if (this.reconnectTimeout !== null) {
         window.clearTimeout(this.reconnectTimeout);
       }
-      
+
       // Attempt to reconnect after a delay
       this.reconnectTimeout = window.setTimeout(() => {
         if (this.peer) {
@@ -152,11 +159,12 @@ export class PeerConnectionService {
         this.isInitialized = false;
         this.initializePeer(stream, initiator);
       }, 2000);
-      
     } else {
       console.error("Maximum reconnection attempts reached");
       if (this.onErrorCallback) {
-        this.onErrorCallback(new Error("Failed to establish connection after multiple attempts"));
+        this.onErrorCallback(
+          new Error("Failed to establish connection after multiple attempts")
+        );
       }
     }
   }
@@ -216,7 +224,7 @@ export class PeerConnectionService {
       window.clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
     }
-    
+
     if (this.peer) {
       try {
         this.peer.destroy();
@@ -288,7 +296,7 @@ export class PeerConnectionService {
   onError(callback: (err: Error) => void): void {
     this.onErrorCallback = callback;
   }
-  
+
   /**
    * Set callback for when connection is closed
    * @param callback Function to call when connection closes
